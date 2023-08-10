@@ -10,6 +10,8 @@
 
 # production
 /build
+/dist
+fly.toml
 
 # misc
 .DS_Store
@@ -17,7 +19,12 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
+.dockerignore
+.gitignore
 
+README.md
+package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
