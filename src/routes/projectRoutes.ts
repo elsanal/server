@@ -47,7 +47,20 @@ projectRouter.put('/project/:id', async (req: Request, res: Response) => {
   try {
     console.log("Start putting {'/project/:id'}")
     await projectCollection
-    .findOneAndUpdate({_id:req.body._id}, req.body); // create a new User instance with the request body
+    .findOneAndUpdate({_id:req.body.id}, req.body); // create a new User instance with the request body
+    res.send(req.body).status(200)// save the user to the database
+    console.log(req.body); // return the created user
+  } catch (err) {
+    console.error('Error creating user', err);
+    res.status(500).json({ error: 'Error creating user' });
+  }
+});
+
+projectRouter.patch('/project/:id', async (req: Request, res: Response) => {
+  try {
+    console.log("Start putting {'/project/:id'}")
+    await projectCollection
+    .findOneAndUpdate({_id:req.body.id}, req.body); // create a new User instance with the request body
     res.send(req.body).status(200)// save the user to the database
     console.log(req.body); // return the created user
   } catch (err) {

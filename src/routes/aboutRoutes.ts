@@ -45,6 +45,18 @@ aboutRouter.post('/about', async (req: Request, res: Response) => {
   }
 });
 
+aboutRouter.put('/about/:id', async (req: Request, res: Response) => {
+  try {
+    console.log("Start putting {'/about/:id'}")
+    await aboutCollection
+    .findOneAndUpdate({id:req.body.id}, req.body); // create a new User instance with the request body
+    res.send("OK").status(200)// save the user to the database
+  } catch (err) {
+    console.error('Error creating user', err);
+    res.status(500).json({ error: 'Error creating user' });
+  }
+});
+
 aboutRouter.patch('/about/:id', async (req: Request, res: Response) => {
   try {
     console.log("Start putting {'/about/:id'}")

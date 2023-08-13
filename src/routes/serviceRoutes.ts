@@ -46,7 +46,7 @@ serviceRouter.post('/service', async (req: Request, res: Response) => {
 serviceRouter.put('/service/:id', async (req: Request, res: Response) => {
   try {
     await serviceCollection
-    .findOneAndUpdate({_id:req.body._id}, req.params); 
+    .findOneAndUpdate({_id:req.body.id}, req.params); 
     res.send("OK").status(200);
   } catch (err) {
     res.status(500).json({ error: 'Error updating post' });
