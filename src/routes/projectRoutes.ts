@@ -2,103 +2,73 @@ import express, { Router, Request, Response } from 'express';
 import {projectCollection} from '../data/models';
 
 const projectRouter: Router = express.Router();
+
+///////////////////////// GET METHODS //////////////////////////
 projectRouter.get('/project', async(req: Request, res: Response) => {
-    // Use mongoose to query the database
-    console.log("Start getting {'/api/project'}")
-    const Docs = await projectCollection.find({});
     try {
+      const Docs = await projectCollection.find({});
       res.setHeader('Content-Range', `bytes 0-${Docs.length - 1}/${Docs.length}`);
       res.setHeader('Accept-Range', 'bytes');
-      res.send(Docs);
-      res.status(200);
+      res.send(Docs).status(200)
     } catch (error) {
-      console.log("There is an error")
       res.status(500).json({ message: 'Error fetching data' });
+      console.error("Error featching data : ",error);
     }
   });
 
-projectRouter.get(`/project/:id`, async(req: Request, res: Response, next) => {
-  // Use mongoose to query the database
-  console.log("Start getting {'/project/:id'}")
-  const Docs = await projectCollection.findOne({ _id: req.params.id})
+projectRouter.get('/project/:id', async(req: Request, res: Response, next) => {
   try {
-    res.send(Docs);
-    res.status(200);
+    const Docs = await projectCollection.findOne({ _id: req.params.id})
+    res.send(Docs).status(200)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data' });
+    console.error("Error featching data : ",error);
   }
 });
 
-// // Define the API endpoint to create a user
+////////////////////////// POST && UPDATE ////////////////////////////////////
 projectRouter.post('/project', async (req: Request, res: Response) => {
   try {
     console.log("Start posting {'/project'}")
-    const proj = new projectCollection(req.body); // create a new User instance with the request body
+    const proj = new projectCollection(req.body);
     await proj.save(); 
-    res.send(req.body).status(200)// save the user to the database
-   // return the created user
+    res.send("Ok").status(200)
   } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
-  }
-});
-
-projectRouter.put('/project/:id', async (req: Request, res: Response) => {
-  try {
-    console.log("Start putting {'/project/:id'}")
-    await projectCollection
-    .findOneAndUpdate({_id:req.body.id}, req.body); // create a new User instance with the request body
-    res.send(req.body).status(200)// save the user to the database
-    console.log(req.body); // return the created user
-  } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
+    console.error('Error creating post', err);
+    res.status(500).json({ error: 'Error creating post' });
   }
 });
 
 projectRouter.patch('/project/:id', async (req: Request, res: Response) => {
   try {
-    console.log("Start putting {'/project/:id'}")
     await projectCollection
-    .findOneAndUpdate({_id:req.body.id}, req.body); // create a new User instance with the request body
-    res.send(req.body).status(200)// save the user to the database
-    console.log(req.body); // return the created user
+    .findOneAndUpdate({id:req.params.id}, req.body); 
+    res.send("OK").status(200)
   } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
+    console.error('Error updating post', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
 });
 
-projectRouter.delete('/project', async (req: Request, res: Response) => {
-  try {
-    console.log(req.body)
-    await projectCollection.findOneAndDelete({});
-    res.send().status(200)// save the user to the database
-    console.log("Document deleted.")
-  } catch (err) {
-    console.error('Error deleting doc', err);
-  }
-});
-
+////////////////////// DELETE METHOD //////////////////////////////////
 projectRouter.delete('/project/:id', async (req: Request, res: Response) => {
   try {
-    console.log("Start deleting")
     await projectCollection.findOneAndDelete({});
-    res.send().status(200)// save the user to the database
-    console.log("Document deleted.")
+    res.send("OK").status(200)
   } catch (err) {
     console.error('Error deleting doc', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
 });
 
-projectRouter.get('/project/:?range=0-9&sort=id%2CASC', async (req: Request, res: Response) => {
+projectRouter.delete('/project/:?range=0-9&sort=id%2CASC', async (req: Request, res: Response) => {
   try {
-    console.log("Start deleting {/project?}")
     await projectCollection.findOneAndDelete({});
-    res.send().status(200)// save the user to the database
-    console.log("Document deleted.")
+    res.send("OK").status(200)
   } catch (err) {
     console.error('Error deleting doc', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
-});  
+});
+  
 export default projectRouter;

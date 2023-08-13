@@ -2,102 +2,73 @@ import express, { Router, Request, Response } from 'express';
 import {aboutCollection} from '../data/models';
 
 const aboutRouter: Router = express.Router();
-// router.use('/about', raExpressMongoose(aboutCollection, { q: ['id']}));
+
+///////////////////////// GET METHODS //////////////////////////
 aboutRouter.get('/about', async(req: Request, res: Response) => {
-    // Use mongoose to query the database
-    console.log("Start getting {'/about'}")
-    const Docs = await aboutCollection.find({});
     try {
+      const Docs = await aboutCollection.find({});
       res.setHeader('Content-Range', `bytes 0-${Docs.length - 1}/${Docs.length}`);
       res.setHeader('Accept-Range', 'bytes');
-      res.send(Docs);
-      res.status(200);
+      res.send(Docs).status(200)
     } catch (error) {
-      console.log("There is an error")
       res.status(500).json({ message: 'Error fetching data' });
+      console.error("Error featching data : ",error);
     }
   });
 
-
 aboutRouter.get('/about/:id', async(req: Request, res: Response, next) => {
-  // Use mongoose to query the database
-  console.log("Start getting {'/about/:id'}")
-  const Docs = await aboutCollection.findOne({ _id: req.params.id})
   try {
-    res.send(Docs);
-    res.status(200);
+    const Docs = await aboutCollection.findOne({ _id: req.params.id})
+    res.send(Docs).status(200)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data' });
+    console.error("Error featching data : ",error);
   }
 });
 
-// // Define the API endpoint to create a user
+////////////////////////// POST && UPDATE ////////////////////////////////////
 aboutRouter.post('/about', async (req: Request, res: Response) => {
   try {
     console.log("Start posting {'/about'}")
-    const proj = new aboutCollection(req.body); // create a new User instance with the request body
+    const proj = new aboutCollection(req.body);
     await proj.save(); 
-    res.send("Ok").status(200)// save the user to the database
-   // return the created user
+    res.send("Ok").status(200)
   } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
-  }
-});
-
-aboutRouter.put('/about/:id', async (req: Request, res: Response) => {
-  try {
-    console.log("Start putting {'/about/:id'}")
-    await aboutCollection
-    .findOneAndUpdate({id:req.body.id}, req.body); // create a new User instance with the request body
-    res.send("OK").status(200)// save the user to the database
-  } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
+    console.error('Error creating post', err);
+    res.status(500).json({ error: 'Error creating post' });
   }
 });
 
 aboutRouter.patch('/about/:id', async (req: Request, res: Response) => {
   try {
-    console.log("Start putting {'/about/:id'}")
     await aboutCollection
-    .findOneAndUpdate({id:req.body.id}, req.body); // create a new User instance with the request body
-    res.send("OK").status(200)// save the user to the database
+    .findOneAndUpdate({id:req.params.id}, req.body); 
+    res.send("OK").status(200)
   } catch (err) {
-    console.error('Error creating user', err);
-    res.status(500).json({ error: 'Error creating user' });
+    console.error('Error updating post', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
 });
 
-aboutRouter.delete('/about', async (req: Request, res: Response) => {
-  try {
-    console.log(req.body)
-    await aboutCollection.findOneAndDelete({});
-    res.send().status(200)// save the user to the database
-    console.log("Document deleted.")
-  } catch (err) {
-    console.error('Error deleting doc', err);
-  }
-});
-
+////////////////////// DELETE METHOD //////////////////////////////////
 aboutRouter.delete('/about/:id', async (req: Request, res: Response) => {
   try {
-    console.log("Start deleting")
     await aboutCollection.findOneAndDelete({});
-    res.send("Deleted").status(200)// save the user to the database
+    res.send("OK").status(200)
   } catch (err) {
     console.error('Error deleting doc', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
 });
 
-aboutRouter.get('/about/:?range=0-9&sort=id%2CASC', async (req: Request, res: Response) => {
+aboutRouter.delete('/about/:?range=0-9&sort=id%2CASC', async (req: Request, res: Response) => {
   try {
-    console.log("Start deleting {/about?}")
     await aboutCollection.findOneAndDelete({});
-    res.send().status(200)// save the user to the database
-    console.log("Document deleted.")
+    res.send("OK").status(200)
   } catch (err) {
     console.error('Error deleting doc', err);
+    res.status(500).json({ error: 'Error updating post' });
   }
-});  
+});
+  
 export default aboutRouter;
