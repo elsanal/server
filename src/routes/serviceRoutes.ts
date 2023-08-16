@@ -9,6 +9,8 @@ serviceRouter.get('/service', async(req: Request, res: Response) => {
       const Docs = await serviceCollection.find({});
       res.setHeader('Content-Range', `bytes 0-${Docs.length - 1}/${Docs.length}`);
       res.setHeader('Accept-Range', 'bytes');
+      res.setHeader('Cache-Control', 'public, max-age=3600, max-stale=3600, stale-if-error=86400, must-revalidate');
+      res.setHeader('Content-Type', 'application/json');
       res.send(Docs).status(200)
     } catch (error) {
       res.status(500).json({ message: 'Error fetching data' });
@@ -19,6 +21,8 @@ serviceRouter.get('/service', async(req: Request, res: Response) => {
 serviceRouter.get('/service/:id', async(req: Request, res: Response, next) => {
   try {
     const Docs = await serviceCollection.findOne({ _id: req.params.id})
+    res.setHeader('Cache-Control', 'public, max-age=3600, max-stale=3600, stale-if-error=86400, must-revalidate');
+    res.setHeader('Content-Type', 'application/json');
     res.send(Docs).status(200)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data' });

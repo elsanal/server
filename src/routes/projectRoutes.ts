@@ -9,6 +9,8 @@ projectRouter.get('/project', async(req: Request, res: Response) => {
       const Docs = await projectCollection.find({});
       res.setHeader('Content-Range', `bytes 0-${Docs.length - 1}/${Docs.length}`);
       res.setHeader('Accept-Range', 'bytes');
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'public, max-age=3600, max-stale=3600, stale-if-error=86400, must-revalidate');
       res.send(Docs).status(200)
     } catch (error) {
       res.status(500).json({ message: 'Error fetching data' });
@@ -19,6 +21,8 @@ projectRouter.get('/project', async(req: Request, res: Response) => {
 projectRouter.get('/project/:id', async(req: Request, res: Response, next) => {
   try {
     const Docs = await projectCollection.findOne({ _id: req.params.id})
+    res.setHeader('Cache-Control', 'public, max-age=3600, max-stale=3600, stale-if-error=86400, must-revalidate');
+    res.setHeader('Content-Type', 'application/json');
     res.send(Docs).status(200)
   } catch (error) {
     res.status(500).json({ message: 'Error fetching data' });
